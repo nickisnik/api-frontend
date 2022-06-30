@@ -23,7 +23,7 @@ a {
   flex-direction: column;
   align-items: center;
   gap: 1rem;
-  padding: 1rem;
+  padding: 1rem 0.1rem;
   height: 100vh;
   overflow-y: scroll;
 }
@@ -39,6 +39,8 @@ a {
   padding: 1.5rem 2rem;
   border: 2px solid #dadce0;
   min-width: 40vw;
+  display: flex;
+  flex-direction: column;
 }
 
 .comment-box:hover {
@@ -69,6 +71,28 @@ a {
   color: rgb(9, 9, 9);
 }
 
+.comment-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.comment-delete, .comment-edit {
+  border: none;
+  cursor: pointer;
+  background-color: rgb(237, 39, 39);
+  padding: 0.5rem 1rem;
+  min-width: 70px;
+  border-radius: 25px;
+  letter-spacing: 1px;
+  color: white;
+  font-weight: 600;
+}
+
+.comment-edit {
+  background-color: rgb(56, 88, 247);
+  margin-left: auto;
+}
+
 
 .form {
   margin: 3rem 0;
@@ -79,7 +103,7 @@ a {
 .form-text {
   min-width: 40vw;
   min-height: 100px;
-  border-radius: 20px;
+  border-radius: 17px;
   border: 2px solid #dadce0;
   padding: 1rem;
   font-size: 1.2rem;
@@ -93,7 +117,7 @@ a {
 }
 
 .form-name {
-  border-radius: 10px;
+  border-radius: 12px;
   border: 2px solid #dadce0;
   font-size: 1.1em;
   padding-left: 0.5rem;

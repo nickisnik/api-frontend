@@ -6,16 +6,13 @@ const axios = require('axios')
 
 export default function Home() {
   const [comments, setComments] = useState([]);
+  const [editingText, setEditingText] = useState('');
+  const [editedId, setEditedId] = useState('');
+  const [editMode, setEditMode] = useState(false);
   const devMode = false;
 
   const url = devMode === true? 'http://localhost:3000' : 'https://node-comments-api.herokuapp.com';
-  /* const backendURL = () => {
-    if (devMode === true) {
-      return backendURL = 'https://localhost:3000'
-    } else {
-      return 'https://node-comments-api.herokuapp.com'
-    }
-  } */
+
   const fetcher = async () => {
     await axios.get(`${url}/subscribers`) 
       .then((res) => setComments(res.data))
@@ -24,6 +21,7 @@ export default function Home() {
   
   useEffect(() => {
     fetcher()
+    
   }, []);
 
   useEffect(() => {
@@ -34,6 +32,10 @@ export default function Home() {
   
     return () => clearInterval(intervalId);
   }, []);
+  
+  useEffect(() => {
+    console.log(comments[0]?.["_id"])
+  }, [comments])
 
   const dateConverter = (date) => {
     const ms = Date.parse(date);
@@ -41,14 +43,39 @@ export default function Home() {
     return dateObj.toLocaleString();
   }
 
-  const commentsHTML = comments.map((comm, index) => {
+  const handleDelete = (comment) => {
+    axios.delete(`${url}/subscribers/${comment}`)
+      .catch((err) => console.log(err))
+  }
+
+  const handleEdit = (comm) => {
+    if(!editMode) {
+      setEditedId(comm["_id"])
+      setEditingText(comm.commentText);
+    } else {
+      console.log(editingText)
+      axios.patch(`${url}/subscribers/${comm["_id"]}`, {
+        "commentText": editingText
+      }).then(() => {
+        setEditedId('')
+        setEditingText('')
+      }).catch((err) => console.log(err))
+    }
+    setEditMode((prev) => !prev)
+  }
+
+  const commentsHTML = [...comments].reverse().map((comm, index) => {
     return( 
     <div key={index} className="comment-box">
       <header className="comment-header">
         <h3 className='author'>{comm.name}</h3>
         <span className='comment-date'>{dateConverter(comm.commentDate)}</span>
       </header>
-      <p className='comment'>{comm.commentText}</p>
+      {comm["_id"] === editedId ? <textarea value={editingText} onChange={(e) => {setEditingText(e.target.value)}} /> : <p className='comment'>{comm.commentText}</p>}
+      <div className="comment-buttons">
+        <button className='comment-edit' onClick={() => handleEdit(comm)}>{!editMode ? "Edit" : 'Confirm'}</button>
+        <button className='comment-delete' onClick={() => handleDelete(comm?.["_id"])}>Delete</button>
+      </div>
     </div>
     )
   })
