@@ -45,7 +45,7 @@ export default function Home() {
       "commentText": text,
       "name": name
     }
-    axios.post('http://127.0.0.1:3000/subscribers', toSubmit)
+    axios.post('https://node-comments-api.herokuapp.com/subscribers', toSubmit)
   }
   return (
     <div>
