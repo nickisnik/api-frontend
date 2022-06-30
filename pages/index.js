@@ -6,9 +6,18 @@ const axios = require('axios')
 
 export default function Home() {
   const [comments, setComments] = useState([]);
+  const devMode = false;
 
+  const url = devMode === true? 'http://localhost:3000' : 'https://node-comments-api.herokuapp.com';
+  /* const backendURL = () => {
+    if (devMode === true) {
+      return backendURL = 'https://localhost:3000'
+    } else {
+      return 'https://node-comments-api.herokuapp.com'
+    }
+  } */
   const fetcher = async () => {
-    await axios.get('https://node-comments-api.herokuapp.com/subscribers') 
+    await axios.get(`${url}/subscribers`) 
       .then((res) => setComments(res.data))
       .catch((err) => console.log(err))
   }
@@ -17,21 +26,29 @@ export default function Home() {
     fetcher()
   }, []);
 
-/*   useEffect(() => {
+  useEffect(() => {
+    if(!devMode) {return}
     const intervalId = setInterval(() => {
       fetcher()
     }, 3000);
   
     return () => clearInterval(intervalId);
-  }, []); */
+  }, []);
 
-  
+  const dateConverter = (date) => {
+    const ms = Date.parse(date);
+    const dateObj = new Date(ms);
+    return dateObj.toLocaleString();
+  }
 
   const commentsHTML = comments.map((comm, index) => {
     return( 
-    <div key={index}>
-      <h3>{comm.name}</h3>
-      <p>{comm.commentText}</p>
+    <div key={index} className="comment-box">
+      <header className="comment-header">
+        <h3 className='author'>{comm.name}</h3>
+        <span className='comment-date'>{dateConverter(comm.commentDate)}</span>
+      </header>
+      <p className='comment'>{comm.commentText}</p>
     </div>
     )
   })
@@ -45,17 +62,17 @@ export default function Home() {
       "commentText": text,
       "name": name
     }
-    axios.post('https://node-comments-api.herokuapp.com/subscribers', toSubmit)
+    axios.post(`${url}/subscribers`, toSubmit)
   }
   return (
-    <div>
-      {!commentsHTML ? '' : commentsHTML }
-      <form onSubmit={submitHandler}>
-        <label htmlFor="comment">Comment</label>
-        <input name="comment" type="text" required />
-        <label htmlFor="name">Name</label>
-        <input name="name" type="text" required />
-        <button type='submit'>Submit</button>
+    <div className='app'>
+      <div className="comment-list">{!commentsHTML ? '' : commentsHTML }</div>
+      <form onSubmit={submitHandler} className="form">
+        <textarea className='form-text' name="comment" type="text" placeholder='comment...' required></textarea>
+        <div className="name-submit-box">
+          <input className="form-name" name="name" type="text" placeholder='name...' required />
+          <button className='form-btn' type='submit'>Submit</button>
+        </div>
       </form>
     </div>
   )
