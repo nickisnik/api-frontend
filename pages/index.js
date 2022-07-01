@@ -45,6 +45,9 @@ export default function Home() {
 
   const handleDelete = (comment) => {
     axios.delete(`${url}/subscribers/${comment}`)
+      .then(() => {
+        fetcher()
+      })
       .catch((err) => console.log(err))
   }
 
