@@ -25,7 +25,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if(!devMode) {return}
+    /* if(!devMode) {return} */
     const intervalId = setInterval(() => {
       fetcher()
     }, 3000);
@@ -57,6 +57,7 @@ export default function Home() {
       axios.patch(`${url}/subscribers/${comm["_id"]}`, {
         "commentText": editingText
       }).then(() => {
+        fetcher()
         setEditedId('')
         setEditingText('')
       }).catch((err) => console.log(err))
@@ -71,7 +72,7 @@ export default function Home() {
         <h3 className='author'>{comm.name}</h3>
         <span className='comment-date'>{dateConverter(comm.commentDate)}</span>
       </header>
-      {comm["_id"] === editedId ? <textarea value={editingText} onChange={(e) => {setEditingText(e.target.value)}} /> : <p className='comment'>{comm.commentText}</p>}
+      {comm["_id"] === editedId ? <textarea className='comment-edit-input' value={editingText} onChange={(e) => {setEditingText(e.target.value)}}></textarea> : <p className='comment'>{comm.commentText}</p>}
       <div className="comment-buttons">
         <button className='comment-edit' onClick={() => handleEdit(comm)}>{!editMode ? "Edit" : 'Confirm'}</button>
         <button className='comment-delete' onClick={() => handleDelete(comm?.["_id"])}>Delete</button>
@@ -90,6 +91,10 @@ export default function Home() {
       "name": name
     }
     axios.post(`${url}/subscribers`, toSubmit)
+      .then(() => {
+        fetcher()
+      })
+      .catch((err) => console.log(err))
   }
   return (
     <div className='app'>
